@@ -2,15 +2,16 @@
 // Don't remove this comment. It's needed to format import lines nicely.
 
 import { errorLogger } from './hooks/error-handler';
+import { discard } from 'feathers-hooks-common';
 
 export default {
   before: {
     all: [],
     find: [],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
+    create: [discard('_id')],
+    update: [discard('_id')],
+    patch: [discard('_id')],
     remove: [],
   },
 

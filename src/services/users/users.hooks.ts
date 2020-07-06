@@ -9,47 +9,53 @@ import {
   iff,
   isProvider,
   isNot,
+  alterItems,
 } from 'feathers-hooks-common';
 import { HookContext } from '@feathersjs/feathers';
 import logger from '../../logger';
+import { isAllowed } from '../../hooks/is-allowed';
+import { unique } from '../../hooks/unique';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = feathersAuthentication.hooks;
 const { hashPassword, protect } = local.hooks;
-const allowed = (context: HookContext) => {
-  logger.info('------- is admin', context.params.user.roles);
-  const user = context.params.user;
-  const isAdmin = user.roles === 'Admin';
-  const ownsResource = context.params?.query?.id === user._id;
-  return isAdmin || ownsResource;
-};
 
 export default {
   before: {
-    all: [],
-    find: [authenticate('jwt')],
-    get: [authenticate('jwt')],
+    all: [authenticate('jwt')],
+    find: [],
+    get: [],
     create: [
       required('username', 'password'),
+      unique('username'),
+      discard('_id'),
       hashPassword('password'),
       setNow('createdAt', 'updatedAt'),
     ],
     update: [
-      // disallow(),
+      iff(isProvider('external'), iff(isNot(isAllowed), disallow())),
+      // Handle when password is null
+      alterItems((rec) => {
+        if (!rec.password) delete rec.password;
+      }),
       hashPassword('password'),
-      authenticate('jwt'),
-      iff(isProvider('external'), iff(isNot(allowed), disallow())),
       iff(isProvider('external'), discard('createdAt', 'updatedAt')),
       setNow('updatedAt'),
     ],
     patch: [
+      iff(isProvider('external'), iff(isNot(isAllowed), disallow())),
+      // Unique fields
+      unique('username'),
+      // Handle when password is null
+      alterItems((rec) => {
+        if (!rec.password) delete rec.password;
+      }),
       hashPassword('password'),
-      authenticate('jwt'),
       iff(isProvider('external'), discard('createdAt', 'updatedAt')),
-      // preventChanges(false, 'createdAt', 'updatedAt'),
       setNow('updatedAt'),
+      // preventChanges(false, 'createdAt', 'updatedAt'),
     ],
-    remove: [authenticate('jwt')],
+    remove: [iff(isProvider('external'), iff(isNot(isAllowed), disallow()))],
   },
 
   after: {

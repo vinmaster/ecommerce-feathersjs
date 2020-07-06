@@ -5,5 +5,6 @@ import logger from './../logger';
 
 export const errorLogger = async (context: HookContext) => {
   logger.error(context.error);
+  if (context.error.stack) logger.error(context.error.stack);
   return context;
 };

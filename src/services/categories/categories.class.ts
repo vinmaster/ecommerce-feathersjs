@@ -5,4 +5,4 @@ export class Categories extends Service {
   constructor(options: Partial<NedbServiceOptions>, app: Application) {
     super(options);
   }
-};
+}

@@ -1,5 +1,5 @@
 // Initializes the `categories` service on path `/categories`
-import { ServiceAddons } from '@feathersjs/feathers';
+import { ServiceAddons, Paginated } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Categories } from './categories.class';
 import createModel from '../../models/categories.model';
@@ -27,5 +27,13 @@ export default function (app: Application) {
   service.hooks(hooks);
 
   // Seeding
-  service.create({ name: 'Other' });
+  app
+    .service('categories')
+    .find({ query: { name: 'Other' } })
+    .then((result) => {
+      result = result as Paginated<any>;
+      if (result.total === 0) {
+        service.create({ name: 'Other' });
+      }
+    });
 }

@@ -34,18 +34,18 @@ export class Users extends Service {
     if (!role) {
       data.role = Role.Customer;
     }
-    const result = (await this.find({ query: { username } })) as Paginated<any>;
-    // logger.info('------- user create', result.data);
-    if (result.total > 0) {
-      // const error = {
-      //   message: 'Invalid username',
-      //   errors: {
-      //     username: 'Invalid username',
-      //   },
-      // } as any;
-      // throw new BadRequest(error);
-      throw new BadRequest('Username exists');
-    }
+    // const result = (await this.find({ query: { username } })) as Paginated<any>;
+    // // logger.info('------- user create', result.data);
+    // if (result.total > 0) {
+    //   // const error = {
+    //   //   message: 'Invalid username',
+    //   //   errors: {
+    //   //     username: 'Invalid username',
+    //   //   },
+    //   // } as any;
+    //   // throw new BadRequest(error);
+    //   throw new BadRequest('Username exists');
+    // }
     return super.create(data, params);
   }
 }
