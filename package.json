@@ -65,7 +65,7 @@
     "@types/nedb": "^1.8.9",
     "@types/serve-favicon": "^2.5.0",
     "axios": "^0.19.2",
-    "mocha": "^7.2.0",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.4",
     "shx": "^0.3.2",
     "ts-mocha": "^7.0.0",
